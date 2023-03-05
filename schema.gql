@@ -39,6 +39,23 @@ type PlantsPagination {
   nodes: [Plant!]!
 }
 
+type User {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  email: String!
+  firstName: String!
+  lastName: String!
+}
+
+type UserCreateOutput {
+  user: User!
+}
+
+type AuthLoginOutput {
+  accessToken: String!
+}
+
 type Query {
   sayHello: String!
   plantsPagination(skip: Int!, take: Int!, sortBy: PlantsPaginationSortBy): PlantsPagination!
@@ -58,6 +75,8 @@ type Mutation {
   plantCreate(input: PlantCreateInput!): PlantCreateOutput!
   plantUpdate(plantId: ID!, input: PlantUpdateInput!): PlantUpdateOutput!
   plantDelete(plantId: ID!): PlantDeleteOutput!
+  authLogin(username: String!, password: String!): AuthLoginOutput!
+  userCreate(input: UserCreateInput!): UserCreateOutput!
 }
 
 input PlantCreateInput {
@@ -70,4 +89,11 @@ input PlantUpdateInput {
   title: String!
   description: String!
   image: String!
+}
+
+input UserCreateInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
 }

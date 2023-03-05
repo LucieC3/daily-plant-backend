@@ -9,6 +9,9 @@ import { AppService } from './app.service';
 import { AppResolver } from './app.resolver';
 import { Plant } from 'models/plant.model';
 import { PlantModule } from './plant/plant.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { User } from './user/models/user.model';
 
 @Module({
   imports: [
@@ -27,11 +30,13 @@ import { PlantModule } from './plant/plant.module';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_DB'),
-        entities: [Plant, join(__dirname, '***', '*.model.{ts,js}')],
+        entities: [Plant, User, join(__dirname, '***', '*.model.{ts,js}')],
         synchronize: true,
       }),
     }),
     PlantModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

@@ -8,6 +8,7 @@ import {
 } from 'dto/plant.pagination.dto';
 import { PlantUpdateInput, PlantUpdateOutput } from 'dto/plant.update.dto';
 import { Plant } from 'models/plant.model';
+import { SortDirection } from 'pagination/dto/pagination.dto';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -43,10 +44,33 @@ export class PlantService {
   async plantsPagination(
     args: PlantsPaginationArgs,
   ): Promise<PlantsPagination> {
-    const [nodes, totalCount] = await this.plantRepository.findAndCount({
-      skip: args.skip,
-      take: args.take,
-    });
+    const qb = this.plantRepository.createQueryBuilder('plant');
+    qb.take(args.take);
+    qb.skip(args.skip);
+    if (args.sortBy) {
+      if (args.sortBy.createdAt !== null) {
+        qb.orderBy(
+          'plant.createdAt',
+          args.sortBy.createdAt === SortDirection.ASC ? 'ASC' : 'DESC',
+        );
+      }
+      if (args.sortBy.title !== null) {
+        qb.addOrderBy(
+          'plant.title',
+          args.sortBy.title === SortDirection.ASC ? 'ASC' : 'DESC',
+        );
+      }
+    }
+    const [nodes, totalCount] = await qb.getManyAndCount();
+    // const [nodes, totalCount] = await this.plantRepository.findAndCount({
+    //   skip: args.skip,
+    //   take: args.take,
+    //   order: {
+    //     createdAt:
+    //       args.sortBy?.createdAt === SortDirection.ASC ? 'ASC' : 'DESC',
+    //     title: args.sortBy?.title === SortDirection.ASC ? 'ASC' : 'DESC',
+    //   },
+    // });
     return { nodes, totalCount };
   }
 }
